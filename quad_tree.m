@@ -1,4 +1,4 @@
-function segs = quad_tree(img,num_segs,rgb)
+function segs = quad_tree(img,num_segs)
     % image = an M x N x Z image
     % num_segs = number of of final segments, mod(k,3) == 1
     % var_func = segment variance function
@@ -27,9 +27,9 @@ function segs = quad_tree(img,num_segs,rgb)
        vars = arrayfun(@(rng) find_var(img,rng), new_rngs);    
        
        % insert each into queue
-       for i = 1:4
-           rng = new_rngs(i);
-           var = vars(i);
+       for j = 1:4
+           rng = new_rngs(j);
+           var = vars(j);
            seg = node(var,rng);
            segs.enqueue(seg);
        end
@@ -44,12 +44,11 @@ function result = find_var(I,rng)
 end
 
 function [ne,se,sw,nw] = split(r)
-    % todo need ints
-    middle = r.left + (r.right - r.left) / 2;
-    center = r.top + (r.bottom - r.top) / 2;
+    c = r.center;
+    m = r.middle;
 
-    ne = img_range(middle+1,r.right,r.top,center);
-    se = img_range(middle+1,r.right,center+1,r.bottom);
-    sw = img_range(r.left,middle,center+1,r.bottom);
-    nw = img_range(r.left,middle,r.top,center);
+    ne = img_range(c+1,r.right,r.top,m);
+    se = img_range(c+1,r.right,m+1,r.bottom);
+    sw = img_range(r.left,c,m+1,r.bottom);
+    nw = img_range(r.left,c,r.top,m);
 end
